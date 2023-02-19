@@ -93,6 +93,14 @@ class PublicUserApiTests(TestCase):
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_create_token_email_not_found(self):
+        """Test error returned if user not found for given email"""
+        payload = {'email': 'test@example.com', 'password': 'pass123'}
+        res = self.client.post(TOKEN_URL, payload)
+
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_create_token_blank_password(self):
         """Test"""
         payload = {'email': 'test@example.com', 'password': ''}
@@ -132,11 +140,11 @@ class PrivateUserApiTests(TestCase):
 
     def test_post_not_allowed(self):
         """Test POST is not allowed for the me endpoint."""
-        res = self.client.post(ME_URL)
+        res = self.client.post(ME_URL, {})
 
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_update_user_proile(self):
+    def test_update_user_profile(self):
         """Test updating the user profile for the authenticated user."""
         payload = {'name': 'Updated Name', 'password': 'newpassword123'}
 
